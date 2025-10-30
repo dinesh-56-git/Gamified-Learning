@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Math Quest 🧮</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="home-body">
+
+  <nav>
+    <h2>🧮 Math Quest</h2>
+    <p id="welcomeUser"></p>
+  </nav>
+
+  <div class="quiz-container">
+    <h3 id="question">Loading...</h3>
+    <div id="options"></div>
+    <p id="result"></p>
+    <p>Score: <span id="score">0</span></p>
+    <button id="nextBtn">Next Question ➡️</button>
+  </div>
+
+  <footer>
+    <p>Made with ❤️ by Team [Your Team Name]</p>
+  </footer>
+
+ <script>
+  const user = localStorage.getItem("username");
+  document.getElementById("welcomeUser").textContent = `Welcome, ${user}!`;
+
+  let score = 0;
+  let questionCount = 0;
+  const totalQuestions = 10;
+
+  const questionEl = document.getElementById("question");
+  const optionsEl = document.getElementById("options");
+  const resultEl = document.getElementById("result");
+  const nextBtn = document.getElementById("nextBtn");
+  const quizContainer = document.querySelector(".quiz-container");
+
+  let currentCorrectAnswer = null;
+  let answered = false;
+
+  // Hide score area initially
+  document.getElementById("score").parentElement.style.display = "none";
+
+  function generateQuestion() {
+    // If all questions done → show result
+    if (questionCount >= totalQuestions) {
+      showResultScreen();
+      return;
+    }
+
+    // Reset state
+    answered = false;
+    resultEl.textContent = "";
+    nextBtn.style.display = "none";
+    optionsEl.innerHTML = "";
+    questionCount++;
+
+    // Random question
+    let num1 = Math.floor(Math.random() * 10) + 1;
+    let num2 = Math.floor(Math.random() * 10) + 1;
+    currentCorrectAnswer = num1 + num2;
+    questionEl.textContent = `Q${questionCount}: What is ${num1} + ${num2}?`;
+
+    // Random options
+    let answers = [
+      currentCorrectAnswer,
+      currentCorrectAnswer + 1,
+      currentCorrectAnswer - 1,
+      currentCorrectAnswer + 2
+    ].sort(() => Math.random() - 0.5);
+
+    answers.forEach(ans => {
+      const btn = document.createElement("button");
+      btn.textContent = ans;
+      btn.onclick = () => checkAnswer(ans, btn);
+      optionsEl.appendChild(btn);
+    });
+  }
+
+  function checkAnswer(selected, btn) {
+    if (answered) return;
+    answered = true;
+
+    const buttons = optionsEl.querySelectorAll("button");
+    buttons.forEach(b => b.disabled = true);
+
+    if (selected === currentCorrectAnswer) {
+      resultEl.textContent = "✅ Correct!";
+      btn.style.backgroundColor = "green";
+      score++;
+    } else {
+      resultEl.textContent = `❌ Wrong! Correct: ${currentCorrectAnswer}`;
+      btn.style.backgroundColor = "red";
+    }
+
+    nextBtn.style.display = "inline-block";
+  }
+
+  function showResultScreen() {
+    quizContainer.innerHTML = `
+      <h2>🎯 Game Over!</h2>
+      <p>Well done, <strong>${user}</strong>!</p>
+      <p>Your final score is <strong>${score}</strong> out of ${totalQuestions}.</p>
+      <button onclick="restartGame()">🔁 Play Again</button>
+      <button onclick="goHome()">🏠 Go Home</button>
+    `;
+  }
+
+  function restartGame() {
+    score = 0;
+    questionCount = 0;
+    generateQuestion();
+  }
+
+  function goHome() {
+    window.location.href = "home.html";
+  }
+
+  nextBtn.onclick = generateQuestion;
+  generateQuestion();
+</script>
+
+
+</body>
+</html>

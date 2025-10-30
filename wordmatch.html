@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Word Match 📚</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .match-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 30px;
+      margin-top: 40px;
+      flex-wrap: wrap;
+    }
+    .column {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .word, .meaning {
+      background: white;
+      border-radius: 8px;
+      padding: 10px 15px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+      cursor: grab;
+      text-align: center;
+      width: 150px;
+    }
+    .word.correct, .meaning.correct {
+      background: #90ee90;
+    }
+    .word.wrong, .meaning.wrong {
+      background: #ff7f7f;
+    }
+  </style>
+</head>
+<body class="home-body">
+  <nav>
+    <h2>📚 Word Match</h2>
+    <p id="playerName"></p>
+  </nav>
+
+  <h3 style="text-align:center;">Match the word to its meaning!</h3>
+  <div class="match-container">
+    <div class="column" id="words"></div>
+    <div class="column" id="meanings"></div>
+  </div>
+
+  <p id="feedback" style="text-align:center;font-weight:bold;"></p>
+  <footer><p>Made with ❤️ by Team [Your Team Name]</p></footer>
+<script>
+  const player = localStorage.getItem("username");
+  document.getElementById("playerName").textContent = `Welcome, ${player}!`;
+
+  const wordPairs = [
+    { word: "Sun", meaning: "A star that gives light" },
+    { word: "Tree", meaning: "Has leaves and grows" },
+    { word: "River", meaning: "Flows with water" },
+    { word: "Book", meaning: "Used for reading" },
+  ];
+
+  const wordsCol = document.getElementById("words");
+  const meaningsCol = document.getElementById("meanings");
+  const feedback = document.getElementById("feedback");
+
+  let dragged = null, correctCount = 0;
+
+  function shuffle(arr) { return arr.sort(() => Math.random() - 0.5); }
+
+  function loadWords() {
+    wordsCol.innerHTML = "";
+    meaningsCol.innerHTML = "";
+    feedback.textContent = "";
+    correctCount = 0;
+
+    shuffle(wordPairs).forEach(pair => {
+      const w = document.createElement("div");
+      w.textContent = pair.word;
+      w.className = "word";
+      w.draggable = true;
+      w.dataset.word = pair.word;
+      w.ondragstart = e => dragged = e.target;
+      wordsCol.appendChild(w);
+    });
+
+    shuffle(wordPairs).forEach(pair => {
+      const m = document.createElement("div");
+      m.textContent = pair.meaning;
+      m.className = "meaning";
+      m.dataset.word = pair.word;
+      m.ondragover = e => e.preventDefault();
+      m.ondrop = e => checkMatch(e, m);
+      meaningsCol.appendChild(m);
+    });
+  }
+
+  function checkMatch(e, target) {
+    const word = dragged.dataset.word;
+    if (word === target.dataset.word) {
+      dragged.classList.add("correct");
+      target.classList.add("correct");
+      dragged.draggable = false;
+      correctCount++;
+
+      if (correctCount === wordPairs.length) {
+        showEndOptions("🎉 Great job! You matched all correctly!");
+      } else {
+        feedback.textContent = "✅ Correct!";
+      }
+    } else {
+      dragged.classList.add("wrong");
+      target.classList.add("wrong");
+      feedback.textContent = "❌ That doesn’t match! Try again!";
+    }
+  }
+
+  function showEndOptions(message) {
+    feedback.innerHTML = `
+      ${message}<br><br>
+      <button onclick="loadWords()">🔁 Play Again</button>
+      <button onclick="window.location.href='home.html'">🏠 Go Home</button>
+    `;
+  }
+
+  loadWords();
+</script>
+
+</body>
+</html>

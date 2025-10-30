@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Science Sorter 🔬</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      background-color: #eef6fb;
+      font-family: 'Poppins', sans-serif;
+      text-align: center;
+    }
+    .sorter-container {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 40px;
+      margin-top: 50px;
+    }
+    .basket {
+      background-color: #ffffff;
+      border-radius: 15px;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+      width: 200px;
+      height: 250px;
+      padding: 10px;
+      text-align: center;
+    }
+    .basket h3 {
+      background-color: #004080;
+      color: white;
+      padding: 8px;
+      border-radius: 10px;
+    }
+    .items {
+      margin-top: 40px;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    .item {
+      background: white;
+      border-radius: 8px;
+      padding: 10px 20px;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+      cursor: grab;
+      transition: 0.3s;
+    }
+    .item.correct { background-color: #90ee90; }
+    .item.wrong { background-color: #ff7f7f; }
+    #feedback {
+      margin-top: 25px;
+      font-size: 1.2em;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <h2>🔬 Science Sorter Game</h2>
+    <p id="playerName"></p>
+  </nav>
+
+  <h3>Drag the item into the correct basket!</h3>
+
+  <div class="sorter-container">
+    <div class="basket" id="plantBasket" ondragover="event.preventDefault()" ondrop="dropItem(event, 'plant')">
+      <h3>🌿 Plants</h3>
+    </div>
+    <div class="basket" id="animalBasket" ondragover="event.preventDefault()" ondrop="dropItem(event, 'animal')">
+      <h3>🐾 Animals</h3>
+    </div>
+  </div>
+
+  <div class="items" id="itemContainer"></div>
+
+  <p id="feedback"></p>
+
+  <footer><p>Made with ❤️ by Team [Your Team Name]</p></footer>
+
+  <script>
+  const name = localStorage.getItem("username");
+  document.getElementById("playerName").textContent = `Welcome, ${name}!`;
+
+  const items = [
+    { name: "Tiger", type: "animal" },
+    { name: "Rose", type: "plant" },
+    { name: "Elephant", type: "animal" },
+    { name: "Mango Tree", type: "plant" },
+    { name: "Dog", type: "animal" },
+    { name: "Sunflower", type: "plant" }
+  ];
+
+  const container = document.getElementById("itemContainer");
+  const feedback = document.getElementById("feedback");
+  let correctCount = 0;
+  let dragged = null;
+
+  function shuffle(arr) { return arr.sort(() => Math.random() - 0.5); }
+
+  function loadItems() {
+    container.innerHTML = "";
+    feedback.textContent = "";
+    correctCount = 0;
+
+    shuffle(items).forEach(item => {
+      const div = document.createElement("div");
+      div.textContent = item.name;
+      div.className = "item";
+      div.draggable = true;
+      div.dataset.type = item.type;
+      div.ondragstart = e => dragged = e.target;
+      container.appendChild(div);
+    });
+  }
+
+  function dropItem(e, basketType) {
+    const itemType = dragged.dataset.type;
+    if (itemType === basketType) {
+      dragged.classList.add("correct");
+      dragged.draggable = false;
+      correctCount++;
+      feedback.textContent = "✅ Correct!";
+      if (correctCount === items.length) {
+        showEndOptions("🎉 Great job! You sorted all correctly!");
+      }
+    } else {
+      dragged.classList.add("wrong");
+      feedback.textContent = "❌ Wrong basket! Try again!";
+    }
+  }
+
+  function showEndOptions(message) {
+    feedback.innerHTML = `
+      ${message}<br><br>
+      <button onclick="loadItems()">🔁 Play Again</button>
+      <button onclick="window.location.href='home.html'">🏠 Go Home</button>
+    `;
+  }
+
+  loadItems();
+</script>
+
+</body>
+</html>

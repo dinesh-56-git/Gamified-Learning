@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gamified Learning - Home</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="home-body">
+
+  <nav>
+    <h2>🎓 Gamified Learning Platform</h2>
+    <p id="welcomeText"></p>
+  </nav>
+
+  <section class="modules">
+    <div class="card">
+      <h3>Math Quest 🧮</h3>
+      <p>Play and learn numbers!</p>
+<button onclick="window.location.href='quiz.html'">Play Now</button>
+    </div>
+    <div class="card">
+      <h3>Science Adventure 🔬</h3>
+      <p>Explore fun experiments!</p>
+      <button>Start</button>
+    </div>
+    <div class="card">
+      <h3>English Explorer 📚</h3>
+      <p>Improve your vocabulary!</p>
+      <button>Play Now</button>
+    </div>
+    
+
+<div class="card">
+  <h3>Word Match 📚</h3>
+  <p>Match words with meanings!</p>
+  <button onclick="window.location.href='wordmatch.html'">Play Now</button>
+</div>
+<div class="card">
+  <h3>Science Sorter 🔬</h3>
+  <p>Drag items into correct categories!</p>
+  <button onclick="window.location.href='sciencesorter.html'">Play Now</button>
+</div>
+<div class="card">
+  <h3>Catch the Correct Answer 🎮</h3>
+  <p>Move the basket to catch the right answers!</p>
+  <button onclick="window.location.href='catchgame.html'">Play Now</button>
+</div>
+
+
+  </section>
+
+  
+
+  <script>
+    const user = localStorage.getItem("username");
+    document.getElementById("welcomeText").textContent = `Welcome, ${user}!`;
+  </script>
+</body>
+</html>
